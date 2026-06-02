@@ -58,33 +58,53 @@ One thing to notice about modules is that their inputs and outputs are named by 
 
 <h2>Building</h2>
 
-To date, Yase has been developed on MacOS 11.6.1. The following are required:
-- `git`, `g++`, and `make`, part of the MacOS Development Tools.
-- Brew, for installing things: https://brew.sh/
-- PortAudio, which can be installed with `brew install portaudio``
-- RtMidi:, which can be installed with `brew install rtmidi`
-- Google Test: which can be installed with `brew install googletest``
-- Niels Lohman's JSON library, which can be installed with `brew install nlohmann-json`
-- FFTW, which can be installed with `brew install fftw`
-- AudioFile, which can be installed with `brew --prefix adamstark-audiofile`
-- To make the docs, you'll need doxygen and graphviz: `brew install doxygen graphviz`
+YASE now builds with CMake on Linux. CMake looks for the libraries used by YASE
+and, by default, downloads the ones it can build locally:
 
-On some Macs things are installed in strange places. Doing the following helps the linker work right.
-```
-export PATH="/usr/bin:$PATH"
+- PortAudio
+- RtMidi
+- Google Test
+- Niels Lohman's JSON library
+- FFTW
+- AudioFile
+
+You'll still need a C++ compiler, `git`, and CMake. On Debian/Ubuntu:
+
+```bash
+sudo apt install build-essential git cmake pkg-config libasound2-dev
 ```
 
-Once all the prerequisites are installed, get the code and compile it
+`libasound2-dev` gives PortAudio a Linux audio backend when CMake builds it
+from source.
+
+Then get the code and compile it:
 
 ```bash
 git clone https://github.com/klavins/yase.git
 cd yase
-cp defs.mk.template defs.mk
-make
+./build.sh
 ```
 
 Assuming no errors, you should be able to hear sound if you run
 ```bash
-./examples/bin/sine_wave
+./build/bin/sine_wave
 ```
 
+If you prefer to install dependencies yourself and prevent CMake from
+downloading anything, configure with:
+
+```bash
+cmake -S . -B build -DYASE_FETCH_DEPS=OFF
+```
+
+Useful build options:
+
+- `YASE_BUILD_EXAMPLES=ON/OFF`
+- `YASE_BUILD_TESTS=ON/OFF`
+- `YASE_BUILD_DOCS=ON/OFF`
+
+To remove generated build output:
+
+```bash
+./cleanup.sh
+```
